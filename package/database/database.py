@@ -28,7 +28,8 @@ class LORConnect():
     def get_parts(self):
         self.connect()
 
-        query = "SELECT * FROM namegen.parts;"   
+        query = """SELECT * FROM namegen.parts
+                   JOIN namegen.collection_parts USING(part_id);"""   
         self.cur.execute(query)
         records = self.cur.fetchall() 
 
@@ -53,7 +54,7 @@ class LORConnect():
             sql_file_path = base_path / 'sql' / 'maintenance' / 'serial_resets.sql'
             with open(sql_file_path) as sql_file:
                 sql_as_string = sql_file.read()
-                self.cur.executescript(sql_as_string)
+            self.cur.execute(sql_as_string)
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -69,8 +70,6 @@ class LORConnect():
        
         self.cur.execute(part_id_if_exists, (part, category,))
         result = self.cur.fetchone()
-        if result is not None:
-            result = { 'part_id': result[0] }
         self.disconnect()
         return result
 
@@ -82,15 +81,13 @@ class LORConnect():
        
         self.cur.execute(col_id_if_exists, (collection,))
         result = self.cur.fetchone()
-        if result is not None:
-            result = { 'col_id': result[0] }
         self.disconnect()
         return result
 
     def get_cp_id_if_exists(self, part, category, collection):
         self.connect()
 
-        col_part_if_exists = """SELECT part_id, col_id FROM namegen.collection_parts
+        col_part_if_exists = """SELECT cp_id FROM namegen.collection_parts
                                 JOIN namegen.collections USING(col_id)
                                 JOIN namegen.parts USING(part_id)
                                 WHERE part = %s
@@ -100,26 +97,31 @@ class LORConnect():
         self.cur.execute(col_part_if_exists, (part, category, collection,))
         result = self.cur.fetchone()
         if result is not None:
-            result = { 'part_id': result[0], 'col_id': result[1] }
+            result = { 'cp_id': result[0] }
         self.disconnect()
         return result
 
     def add_part_to_collection(self, part, category, collection):
-        # self.get_col_part_if_exists(part, category, collection)
-            
+        if self.get_cp_id_if_exists(part, category, collection) is None:
+            part_id = self.get_part_id_if_exists(part, category)
+            col_id = self.get_col_id_if_exists(collection)
+            print('part_id: ', part_id)
+            print('col_id: ', col_id)
+
             self.connect()
 
-            add_part_to_col = """INSERT INTO ;"""
+            add_part_to_col = """INSERT INTO namegen.collection_parts (col_id, part_id)
+                                 VALUES (%s, %s);"""
         
             try:
-                self.cur.execute(insert_part, (part, category, part, category,))
+                self.cur.execute(add_part_to_col, (col_id, part_id,))
                 self.conn.commit()
             except (Exception, psycopg2.DatabaseError) as error:
                 print(error)
                 sql_file_path = base_path / 'sql' / 'maintenance' / 'serial_resets.sql'
                 with open(sql_file_path) as sql_file:
                     sql_as_string = sql_file.read()
-                    self.cur.executescript(sql_as_string)
+                self.cur.execute(sql_as_string)
             finally:
                 if self.conn is not None:
                     self.conn.close()
