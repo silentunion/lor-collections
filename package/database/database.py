@@ -60,7 +60,34 @@ class LORConnect():
 
         self.disconnect()
 
-    def get_col_part_if_exists(self, part, category, collection):
+    def get_part_id_if_exists(self, part, category):
+        self.connect()
+
+        part_id_if_exists = """SELECT part_id FROM namegen.parts
+                                WHERE part = %s
+                                  AND category = %s;"""
+       
+        self.cur.execute(part_id_if_exists, (part, category,))
+        result = self.cur.fetchone()
+        if result is not None:
+            result = { 'part_id': result[0] }
+        self.disconnect()
+        return result
+
+    def get_col_id_if_exists(self, collection):
+        self.connect()
+
+        col_id_if_exists = """SELECT col_id FROM namegen.collections
+                                WHERE collection = %s;"""
+       
+        self.cur.execute(col_id_if_exists, (collection,))
+        result = self.cur.fetchone()
+        if result is not None:
+            result = { 'col_id': result[0] }
+        self.disconnect()
+        return result
+
+    def get_cp_id_if_exists(self, part, category, collection):
         self.connect()
 
         col_part_if_exists = """SELECT part_id, col_id FROM namegen.collection_parts
@@ -71,36 +98,30 @@ class LORConnect():
                                   AND collection = %s;"""
        
         self.cur.execute(col_part_if_exists, (part, category, collection,))
-        
         result = self.cur.fetchone()
+        if result is not None:
+            result = { 'part_id': result[0], 'col_id': result[1] }
         self.disconnect()
         return result
 
     def add_part_to_collection(self, part, category, collection):
-        self.connect()
+        # self.get_col_part_if_exists(part, category, collection)
+            
+            self.connect()
 
-        check_if_exists = """SELECT part_id, col_id FROM namegen.collection_parts
-                             """
+            add_part_to_col = """INSERT INTO ;"""
+        
+            try:
+                self.cur.execute(insert_part, (part, category, part, category,))
+                self.conn.commit()
+            except (Exception, psycopg2.DatabaseError) as error:
+                print(error)
+                sql_file_path = base_path / 'sql' / 'maintenance' / 'serial_resets.sql'
+                with open(sql_file_path) as sql_file:
+                    sql_as_string = sql_file.read()
+                    self.cur.executescript(sql_as_string)
+            finally:
+                if self.conn is not None:
+                    self.conn.close()
 
-        add_part_to_col = """INSERT INTO namegen.parts (col_id, part_id)
-                              SELECT %s, %s
-                              WHERE NOT EXISTS (
-                                  SELECT 1 FROM namegen.collection_parts
-                                  JOIN 
-                                                WHERE part = %s
-                                                  AND category = %s);"""
-       
-        try:
-            self.cur.execute(insert_part, (part, category, part, category,))
-            self.conn.commit()
-        except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
-            sql_file_path = base_path / 'sql' / 'maintenance' / 'serial_resets.sql'
-            with open(sql_file_path) as sql_file:
-                sql_as_string = sql_file.read()
-                self.cur.executescript(sql_as_string)
-        finally:
-            if self.conn is not None:
-                self.conn.close()
-
-        self.disconnect()
+            self.disconnect()
