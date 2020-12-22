@@ -1,9 +1,8 @@
-from package.database.database import LORConnect
+from package.insertions import insert_parts
+from package.database import database
 
 def run():
-    db = LORConnect()
-    db.add_prop_to_part('h', 'letters', 'English Basic', 'is_consonant')
-    db.get_parts()
+    insert_parts()
 
 if __name__ == "__main__":
     run()

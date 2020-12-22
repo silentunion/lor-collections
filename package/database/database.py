@@ -40,30 +40,6 @@ class LORConnect():
         print(records)
         
 
-    def insert_part(self, part, category):
-        self.connect()
-
-        insert_part = """INSERT INTO namegen.parts (part, category)
-                            SELECT %s, %s
-                            WHERE NOT EXISTS (SELECT 1 FROM namegen.parts
-                                              WHERE part = %s
-                                                AND category = %s);"""
-       
-        try:
-            self.cur.execute(insert_part, (part, category, part, category,))
-            self.conn.commit()
-        except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
-            sql_file_path = base_path / 'sql' / 'maintenance' / 'serial_resets.sql'
-            with open(sql_file_path) as sql_file:
-                sql_as_string = sql_file.read()
-            self.cur.execute(sql_as_string)
-        finally:
-            if self.conn is not None:
-                self.conn.close()
-
-        self.disconnect()
-
     def get_part_id_if_exists(self, part, category):
         self.connect()
 
@@ -130,6 +106,30 @@ class LORConnect():
         result = self.cur.fetchone()
         self.disconnect()
         return result
+
+    def insert_part(self, part, category):
+        self.connect()
+
+        insert_part = """INSERT INTO namegen.parts (part, category)
+                            SELECT %s, %s
+                            WHERE NOT EXISTS (SELECT 1 FROM namegen.parts
+                                              WHERE part = %s
+                                                AND category = %s);"""
+       
+        try:
+            self.cur.execute(insert_part, (part, category, part, category,))
+            self.conn.commit()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+            sql_file_path = base_path / 'sql' / 'maintenance' / 'serial_resets.sql'
+            with open(sql_file_path) as sql_file:
+                sql_as_string = sql_file.read()
+            self.cur.execute(sql_as_string)
+        finally:
+            if self.conn is not None:
+                self.conn.close()
+
+        self.disconnect()
 
     def add_part_to_collection(self, part, category, collection):
         if self.get_cp_id_if_exists(part, category, collection) is None:
