@@ -1,11 +1,13 @@
 import os
+from os.path import basename
+from pathlib import Path
 import psycopg2
 import json
 
-__location__ = os.path.realpath(
-os.path.join(os.getcwd(), os.path.dirname(__file__)))
+base_path = Path(__file__).parent
+config_path = base_path / 'config.json'
 
-with open(os.path.join(__location__, 'config.json')) as f:
+with open(config_path) as f:
     config = json.load(f)
 
 
@@ -23,40 +25,35 @@ class LORConnect():
         self.cur.close()
         self.conn.close()
 
-    def get_projects(self, view):
+    def get_parts(self):
         self.connect()
 
-        items = vd[view]['columns']
-        query = vd[view]['query']   
+        query = "SELECT * FROM namegen.parts;"   
         self.cur.execute(query)
-        records = self.cur.fetchall()
+        records = self.cur.fetchall() 
 
         self.disconnect()
-        return records, items
+        print(records)
+        
 
-    def input_project(self, project_num, project_name, phase_num, client):
+    def insert_part(self, part, category):
         self.connect()
 
-
-        query_project = """INSERT INTO aco.projects (project_num, project_name, client)
-                        VALUES (%s, %s, %s) RETURNING project_id;"""
-
-        query_phase = """INSERT INTO aco.projectphases (project_id, phase_num, status_project)
-                        VALUES (%s, 1, 'Proposed');"""
-
-        project_id = None
-
+        insert_part = """INSERT INTO namegen.parts (part, category)
+                            SELECT %s, %s
+                            WHERE NOT EXISTS (SELECT 1 FROM namegen.parts
+                                              WHERE part = %s
+                                                AND category = %s);"""
+       
         try:
-            self.cur.execute(query_project, (project_num, project_name, client,))
-            project_id = self.cur.fetchone()[0]
-            self.conn.commit()
-            self.cur.execute(query_phase, (project_id,))
+            self.cur.execute(insert_part, (part, category, part, category,))
             self.conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
-            sql_file = open("sql/maintenance/sequence_resets.sql")
-            sql_as_string = sql_file.read()
-            cur.executescript(sql_as_string)
+            sql_file_path = base_path / 'sql' / 'maintenance' / 'serial_resets.sql'
+            with open(sql_file_path) as sql_file:
+                sql_as_string = sql_file.read()
+                self.cur.executescript(sql_as_string)
         finally:
             if self.conn is not None:
                 self.conn.close()
