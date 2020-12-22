@@ -106,6 +106,22 @@ class LORConnect():
         result = self.cur.fetchone()
         self.disconnect()
         return result
+    
+    def get_ps_id_if_exists(self, part, category, collection):
+        self.connect()
+
+        ps_id_if_exists = """SELECT ps_id FROM namegen.part_statistics
+                                JOIN namegen.collection_parts USING(cp_id)
+                                JOIN namegen.collections USINg(col_id)
+                                JOIN namegen.parts USING(part_id)
+                                WHERE part = %s
+                                  AND category = %s
+                                  AND collection = %s;"""
+       
+        self.cur.execute(ps_id_if_exists, (part, category, collection,))
+        result = self.cur.fetchone()
+        self.disconnect()
+        return result
 
     def insert_part(self, part, category):
         self.connect()
@@ -168,6 +184,30 @@ class LORConnect():
         
             try:
                 self.cur.execute(add_prop_to_part, (cp_id, prop_id,))
+                self.conn.commit()
+            except (Exception, psycopg2.DatabaseError) as error:
+                print(error)
+                sql_file_path = base_path / 'sql' / 'maintenance' / 'serial_resets.sql'
+                with open(sql_file_path) as sql_file:
+                    sql_as_string = sql_file.read()
+                self.cur.execute(sql_as_string)
+            finally:
+                if self.conn is not None:
+                    self.conn.close()
+
+            self.disconnect()
+    
+    def add_freq_to_part(self, part, category, collection, freq):
+        if self.get_ps_id_if_exists(part, category, collection) is None:
+            cp_id = self.get_cp_id_if_exists(part, category, collection)
+
+            self.connect()
+
+            add_freq_to_part = """INSERT INTO namegen.part_statistics (cp_id, frequency)
+                                 VALUES (%s, %s);"""
+        
+            try:
+                self.cur.execute(add_freq_to_part, (cp_id, freq,))
                 self.conn.commit()
             except (Exception, psycopg2.DatabaseError) as error:
                 print(error)
