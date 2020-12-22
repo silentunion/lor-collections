@@ -135,8 +135,6 @@ class LORConnect():
         if self.get_cp_id_if_exists(part, category, collection) is None:
             part_id = self.get_part_id_if_exists(part, category)
             col_id = self.get_col_id_if_exists(collection)
-            print('part_id: ', part_id)
-            print('col_id: ', col_id)
 
             self.connect()
 
