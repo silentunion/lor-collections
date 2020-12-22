@@ -29,7 +29,10 @@ class LORConnect():
         self.connect()
 
         query = """SELECT * FROM namegen.parts
-                   JOIN namegen.collection_parts USING(part_id);"""   
+                   JOIN namegen.collection_parts USING(part_id)
+                   JOIN namegen.collections USING(col_id)
+                   JOIN namegen.part_properties USING(cp_id)
+                   JOIN namegen.properties USING(prop_id);"""   
         self.cur.execute(query)
         records = self.cur.fetchall() 
 
@@ -84,20 +87,47 @@ class LORConnect():
         self.disconnect()
         return result
 
+    def get_prop_id_if_exists(self, prop):
+        self.connect()
+
+        prop_id_if_exists = """SELECT prop_id FROM namegen.properties
+                                WHERE property = %s;"""
+       
+        self.cur.execute(prop_id_if_exists, (prop,))
+        result = self.cur.fetchone()
+        self.disconnect()
+        return result
+
     def get_cp_id_if_exists(self, part, category, collection):
         self.connect()
 
-        col_part_if_exists = """SELECT cp_id FROM namegen.collection_parts
+        cp_id_if_exists = """SELECT cp_id FROM namegen.collection_parts
                                 JOIN namegen.collections USING(col_id)
                                 JOIN namegen.parts USING(part_id)
                                 WHERE part = %s
                                   AND category = %s
                                   AND collection = %s;"""
        
-        self.cur.execute(col_part_if_exists, (part, category, collection,))
+        self.cur.execute(cp_id_if_exists, (part, category, collection,))
         result = self.cur.fetchone()
-        if result is not None:
-            result = { 'cp_id': result[0] }
+        self.disconnect()
+        return result
+
+    def get_pp_id_if_exists(self, part, category, collection, prop):
+        self.connect()
+
+        pp_id_if_exists = """SELECT pp_id FROM namegen.part_properties
+                                JOIN namegen.properties USING(prop_id)
+                                JOIN namegen.collection_parts USING(cp_id)
+                                JOIN namegen.collections USINg(col_id)
+                                JOIN namegen.parts USING(part_id)
+                                WHERE part = %s
+                                  AND category = %s
+                                  AND collection = %s
+                                  AND property = %s;"""
+       
+        self.cur.execute(pp_id_if_exists, (part, category, collection, prop,))
+        result = self.cur.fetchone()
         self.disconnect()
         return result
 
@@ -115,6 +145,31 @@ class LORConnect():
         
             try:
                 self.cur.execute(add_part_to_col, (col_id, part_id,))
+                self.conn.commit()
+            except (Exception, psycopg2.DatabaseError) as error:
+                print(error)
+                sql_file_path = base_path / 'sql' / 'maintenance' / 'serial_resets.sql'
+                with open(sql_file_path) as sql_file:
+                    sql_as_string = sql_file.read()
+                self.cur.execute(sql_as_string)
+            finally:
+                if self.conn is not None:
+                    self.conn.close()
+
+            self.disconnect()
+
+    def add_prop_to_part(self, part, category, collection, prop):
+        if self.get_pp_id_if_exists(part, category, collection, prop) is None:
+            cp_id = self.get_cp_id_if_exists(part, category, collection)
+            prop_id = self.get_prop_id_if_exists(prop)
+
+            self.connect()
+
+            add_prop_to_part = """INSERT INTO namegen.part_properties (cp_id, prop_id)
+                                 VALUES (%s, %s);"""
+        
+            try:
+                self.cur.execute(add_prop_to_part, (cp_id, prop_id,))
                 self.conn.commit()
             except (Exception, psycopg2.DatabaseError) as error:
                 print(error)
