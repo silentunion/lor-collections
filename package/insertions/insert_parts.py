@@ -17,10 +17,31 @@ class Insertions():
                 db.insert_part(parts[p], category)
                 db.add_part_to_collection(parts[p], category, collection)
                 db.add_prop_to_part(parts[p], category, collection, properties[p])
+                print('Added letter ' + parts[p] + ' to collection ' + collection + ' with prop ' + properties[p])
 
         else:
             print('List lengths do not match')
     
+    def insert_clusters(self):
+        v, c = 'vowel', 'consonant'
+
+        parts = ['ae', 'ai', 'ao', 'au', 'ay',
+            'ea', 'ee', 'ei', 'eo', 'eu', 'ey',
+            'ia', 'ie', 'io', 'iu',
+            'oa', 'oe', 'oi', 'oo', 'ou', 'oy',
+            'ua', 'ue', 'ui', 'uo', 'uy',
+            'ya', 'ye', 'yi', 'yo', 'yu']
+        category = 'clusters'
+        collection = 'English Basic'
+        properties = v
+
+        for p in range(0, len(parts)):
+            db.insert_part(parts[p], category)
+            db.add_part_to_collection(parts[p], category, collection)
+            db.add_prop_to_part(parts[p], category, collection, properties)
+            print('Added letter ' + parts[p] + ' to collection ' + collection + ' with prop ' + properties)
+
+
     def add_frequencies(self):
         parts = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
         'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -35,6 +56,7 @@ class Insertions():
         if len(parts) == len(freqs):
             for p in range(0, len(parts)):
                 db.add_freq_to_part(parts[p], category, collection, freqs[p])
+                print('Applied freq ' + freqs[p] + ' to letter ' + parts[p])
 
         else:
             print('List lengths do not match')
