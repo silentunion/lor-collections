@@ -16,77 +16,72 @@ letter_type = ''
 prev_letter = ''
 prev_letter_type = ''
 
-for word in words_list:
-    for l in range(len(word)):
-        if word[l] in vowels_list:
-            letter_type = 'vowel'
-            if word[l] in vowels:
-                vowels[word[l]] += 1
-            else:
-                vowels[word[l]] = 1
-        elif word[l] in consonants_list:
-            letter_type = 'consonant'
-            if word[l] in cons:
-                cons[word[l]] += 1
-            else:
-                cons[word[l]] = 1
-        else:
-            letter_type = 'other'
-
-        if letter_type != 'other':
-            if word[l] in letters:
-                letters[word[l]] += 1
-            else:
-                letters[word[l]] = 1
-        
-        if l != 0:
-            if letter_type == 'consonant' and prev_letter_type == 'consonant':
-                cl = prev_letter + word[l]
-                if cl in cons_clusters:
-                    cons_clusters[cl] += 1
-                else:
-                    cons_clusters[cl] = 1
-            
-            if letter_type == 'vowel' and prev_letter_type == 'vowel':
-                cl = prev_letter + word[l]
-                if cl in vowel_clusters:
-                    vowel_clusters[cl] += 1
-                else:
-                    vowel_clusters[cl] = 1
-
-        prev_letter = word[l]
-        prev_letter_type = letter_type
-
 total_letters = 0
 total_cons = 0
 total_vowels = 0
 total_cons_cl = 0
 total_vowels_cl = 0
 
-for l in letters:
-    total_letters += letters[l]
-for l in letters:
-    letters[l] = round(letters[l]/total_letters*100, 5)
+# Adds item to the specified dictionary
+def add_item_to_dic(item, dic):
+    if item in dic:
+        dic[item] += 1
+    else:
+        dic[item] = 1
 
-for c in cons:
-    total_cons += cons[c]
-for c in cons:
-    cons[c] = round(cons[c]/total_cons*100, 5)
+# Converts values added up to a percentile
+def convert_to_percent(total, dic):
+    for d in dic:
+        total += dic[d]
+    for d in dic:
+        dic[d] = round(dic[d]/total*100, 5)
 
-for v in vowels:
-    total_vowels += vowels[v]
-for v in vowels:
-    vowels[v] = round(vowels[v]/total_vowels*100, 5)
 
-for c in cons_clusters:
-    total_cons_cl += cons_clusters[c]
-for c in cons_clusters:
-    cons_clusters[c] = round(cons_clusters[c]/total_cons_cl*100, 5)
+for word in words_list:
+    for l in range(len(word)):
+        if word[l] in vowels_list:
+            letter_type = 'vowel'
 
-for v in vowel_clusters:
-    total_vowels_cl += vowel_clusters[v]
-for v in vowel_clusters:
-    vowel_clusters[v] = round(vowel_clusters[v]/total_vowels_cl*100, 5)
+            # ADD TO VOWELS
+            add_item_to_dic(word[l], vowels)
+ 
+        elif word[l] in consonants_list:
+            letter_type = 'consonant'
+
+            #ADD TO CONSONANTS
+            add_item_to_dic(word[l], cons)
+
+        else:
+            letter_type = 'other'
+
+        # ADD TO LETTERS
+        add_item_to_dic(word[l], letters)
+        
+        if l != 0:
+            if letter_type == 'consonant' and prev_letter_type == 'consonant':
+                cl = prev_letter + word[l]
+
+                # ADD TO CONS CLUSTERS
+                add_item_to_dic(cl, cons_clusters)
+            
+            if letter_type == 'vowel' and prev_letter_type == 'vowel':
+                cl = prev_letter + word[l]
+                
+                # ADD TO VOWEL CLUSTERS
+                add_item_to_dic(cl, vowel_clusters)
+
+        prev_letter = word[l]
+        prev_letter_type = letter_type
+
+#-------------------------------------#
+# CONVERSION OF TOTALS TO FREQUENCIES #
+#-------------------------------------#
+convert_to_percent(total_letters, letters)
+convert_to_percent(total_cons, cons)
+convert_to_percent(total_vowels, vowels)
+convert_to_percent(total_cons_cl, cons_clusters)
+convert_to_percent(total_vowels_cl, vowel_clusters)
+
 
 print("Letters: ", dict(sorted(letters.items(), key=lambda item: item[1], reverse=True)))
 print()
