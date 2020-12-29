@@ -7,7 +7,7 @@ def get_words():
 
     for w in words_list:
         word = w[:-1]
-        words_set.add(word)
+        words_set.add(word.lower())
 
     new_words_list = sorted(words_set)
 
