@@ -1,26 +1,19 @@
 import organizer as org
 
 words_list = org.get_words()
-
 vowels_list = ['a', 'e', 'i', 'o', 'u', 'y']
 consonants_list = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
         'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z']
 
-letters = {}
-cons = {}
-vowels = {}
-cons_clusters = {}
-vowel_clusters = {}
+letters, cons, vowels = {}, {}, {}
+cons_clusters, vowel_clusters = {}, {}
 
 letter_type = ''
 prev_letter = ''
 prev_letter_type = ''
 
-total_letters = 0
-total_cons = 0
-total_vowels = 0
-total_cons_cl = 0
-total_vowels_cl = 0
+total_letters, total_cons, total_vowels = 0, 0, 0
+total_cons_cl, total_vowels_cl = 0, 0
 
 # Adds item to the specified dictionary
 def add_item_to_dic(item, dic):
@@ -28,9 +21,6 @@ def add_item_to_dic(item, dic):
         dic[item] += 1
     else:
         dic[item] = 1
-
-
-
 
 for word in words_list:
     for l in range(len(word)):
@@ -59,10 +49,8 @@ for word in words_list:
         prev_letter = word[l]
         prev_letter_type = letter_type
 
-#-------------------------------------#
-# CONVERSION OF TOTALS TO FREQUENCIES #
-#-------------------------------------#
-# Converts values added up to a percentile
+
+# CONVERSION OF TOTALS TO FREQUENCIES
 def convert_to_percent(total, dic):
     for d in dic:
         total += dic[d]
@@ -75,6 +63,8 @@ convert_to_percent(total_vowels, vowels)
 convert_to_percent(total_cons_cl, cons_clusters)
 convert_to_percent(total_vowels_cl, vowel_clusters)
 
+
+# PRINTING THE OUTPUT
 def print_result(title, dic):
     ruler = ''
     for r in range(len(title)):
