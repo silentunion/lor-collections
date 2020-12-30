@@ -213,35 +213,44 @@ def add_pack(title, category, dic, prop, location):
     package = dic_pack(dic, prop, location)
     analysis.append({title: { 'category': category, 'items': package }})
 
-cat = 'letters'
-add_pack('let',     cat, letters,   'None', 'Any')
-add_pack('con',     cat, cons,      'consonant', 'Any')
-add_pack('vow',     cat, vowels,    'vowel', 'Any')
+prop_non = 'None'
+prop_con = 'consonant'
+prop_vow = 'vowel'
 
-add_pack('sta_let', cat, start_letters, 'None', 'beginning')
-add_pack('sta_con', cat, start_cons,    'consonant', 'beginning')
-add_pack('sta_vow', cat, start_vowels,  'vowel', 'beginning')
-add_pack('mid_let', cat, mid_letters,   'None', 'middle')
-add_pack('mid_con', cat, mid_cons,      'consonant', 'middle')
-add_pack('mid_vow', cat, mid_vowels,    'vowel', 'middle')
-add_pack('end_let', cat, end_letters,   'None', 'end')
-add_pack('end_con', cat, end_cons,      'consonant', 'end')
-add_pack('end_vow', cat, end_vowels,    'vowel', 'end')
+loc_any = 'Any'
+loc_beg = 'beginnning'
+loc_mid = 'middle'
+loc_end = 'end'
+
+cat = 'letters'
+add_pack('let',     cat, letters,   prop_non, loc_any)
+add_pack('con',     cat, cons,      prop_con, loc_any)
+add_pack('vow',     cat, vowels,    prop_vow, loc_any)
+
+add_pack('sta_let', cat, start_letters, prop_non, loc_beg)
+add_pack('sta_con', cat, start_cons,    prop_con, loc_beg)
+add_pack('sta_vow', cat, start_vowels,  prop_vow, loc_beg)
+add_pack('mid_let', cat, mid_letters,   prop_non, loc_mid)
+add_pack('mid_con', cat, mid_cons,      prop_con, loc_mid)
+add_pack('mid_vow', cat, mid_vowels,    prop_vow, loc_mid)
+add_pack('end_let', cat, end_letters,   prop_non, loc_end)
+add_pack('end_con', cat, end_cons,      prop_con, loc_end)
+add_pack('end_vow', cat, end_vowels,    prop_vow, loc_end)
 
 cat = 'clusters'
-add_pack('let_cl',  cat, letter_clusters,   'None', 'Any')
-add_pack('con_cl',  cat, cons_clusters,     'consonant', 'Any')
-add_pack('vow_cl',  cat, vowel_clusters,    'vowel', 'Any')
+add_pack('let_cl',  cat, letter_clusters,   prop_non, loc_any)
+add_pack('con_cl',  cat, cons_clusters,     prop_con, loc_any)
+add_pack('vow_cl',  cat, vowel_clusters,    prop_vow, loc_any)
 
-add_pack('sta_cl',      cat, start_letter_clusters, 'None', 'beginning')
-add_pack('sta_con_cl',  cat, start_cons_clusters,   'consonant', 'beginning')
-add_pack('sta_vow_cl',  cat, start_vow_clusters,    'vowel', 'beginning')
-add_pack('mid_cl',      cat, mid_letter_clusters,   'None', 'middle')
-add_pack('mid_con_cl',  cat, mid_cons_clusters,     'consonant', 'middle')
-add_pack('mid_vow_cl',  cat, mid_vow_clusters,      'vowel', 'middle')
-add_pack('end_cl',      cat, end_letter_clusters,   'None', 'end')
-add_pack('end_con_cl',  cat, end_cons_clusters,     'consonant', 'end')
-add_pack('end_vow_cl',  cat, end_vow_clusters,      'vowel', 'end')
+add_pack('sta_cl',      cat, start_letter_clusters, prop_non, loc_beg)
+add_pack('sta_con_cl',  cat, start_cons_clusters,   prop_con, loc_beg)
+add_pack('sta_vow_cl',  cat, start_vow_clusters,    prop_vow, loc_beg)
+add_pack('mid_cl',      cat, mid_letter_clusters,   prop_non, loc_mid)
+add_pack('mid_con_cl',  cat, mid_cons_clusters,     prop_con, loc_mid)
+add_pack('mid_vow_cl',  cat, mid_vow_clusters,      prop_vow, loc_mid)
+add_pack('end_cl',      cat, end_letter_clusters,   prop_non, loc_end)
+add_pack('end_con_cl',  cat, end_cons_clusters,     prop_con, loc_end)
+add_pack('end_vow_cl',  cat, end_vow_clusters,      prop_vow, loc_end)
 
 # analysis_json = json.dumps(analysis)
 
