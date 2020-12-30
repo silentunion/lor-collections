@@ -1,4 +1,5 @@
 import organizer as org
+import json
 
 words_list = org.get_words()
 vowels_list = ['a', 'e', 'i', 'o', 'u', 'y']
@@ -10,6 +11,7 @@ start_letters, start_cons, start_vowels = {}, {}, {}
 mid_letters, mid_cons, mid_vowels = {}, {}, {}
 end_letters, end_cons, end_vowels = {}, {}, {}
 letter_clusters, cons_clusters, vowel_clusters = {}, {}, {}
+start_letter_clusters, mid_letter_clusters, end_letter_clusters = {}, {}, {}
 start_cons_clusters, mid_cons_clusters, end_cons_clusters = {}, {}, {}
 start_vow_clusters, mid_vow_clusters, end_vow_clusters = {}, {}, {}
 
@@ -20,6 +22,7 @@ tot_start_letters, tot_start_cons, tot_start_vowels = 0, 0, 0
 tot_mid_letters, tot_mid_cons, tot_mid_vowels = 0, 0, 0
 tot_end_letters, tot_end_cons, tot_end_vowels = 0, 0, 0
 tot_letter_cl, tot_cons_cl, tot_vowels_cl = 0, 0, 0
+tot_start_let_cl, tot_mid_let_cl, tot_end_let_cl = 0, 0, 0
 tot_start_cons_cl, tot_mid_cons_cl, tot_end_cons_cl = 0, 0, 0
 tot_start_vow_cl, tot_mid_vow_cl, tot_end_vow_cl = 0, 0, 0
 
@@ -39,18 +42,24 @@ def dispatch_cluster(letter_type_list, letter_type, prev_letter_type, is_beginni
             add_item_to_dic(cl, cons_clusters)
             if is_end:
                 add_item_to_dic(cl, end_cons_clusters)
+                add_item_to_dic(cl, end_letter_clusters)
             elif is_beginning:
                 add_item_to_dic(cl, start_cons_clusters)
+                add_item_to_dic(cl, start_letter_clusters)
             else:
                 add_item_to_dic(cl, mid_cons_clusters)
+                add_item_to_dic(cl, mid_letter_clusters) 
         else:
             add_item_to_dic(cl, vowel_clusters)     
             if is_end:
                 add_item_to_dic(cl, end_vow_clusters)
+                add_item_to_dic(cl, end_letter_clusters)
             elif is_beginning:
                 add_item_to_dic(cl, start_vow_clusters)
+                add_item_to_dic(cl, start_letter_clusters)
             else:
-                add_item_to_dic(cl, mid_vow_clusters)     
+                add_item_to_dic(cl, mid_vow_clusters) 
+                add_item_to_dic(cl, mid_letter_clusters)    
     if letter_type != 'other':
         letter_type_list = word[l]
     else:
@@ -145,6 +154,9 @@ convert_to_percent(tot_letter_cl, letter_clusters)
 convert_to_percent(tot_cons_cl, cons_clusters)
 convert_to_percent(tot_vowels_cl, vowel_clusters)
 
+convert_to_percent(tot_start_let_cl, start_letter_clusters)
+convert_to_percent(tot_mid_let_cl, mid_letter_clusters)
+convert_to_percent(tot_end_let_cl, end_letter_clusters)
 convert_to_percent(tot_start_cons_cl, start_cons_clusters)
 convert_to_percent(tot_mid_cons_cl, mid_cons_clusters)
 convert_to_percent(tot_end_cons_cl, end_cons_clusters)
@@ -179,6 +191,9 @@ def print_result(title, dic):
 # print_result('Letter Clusters', letter_clusters)
 # print_result('Consonant Clusters', cons_clusters)
 # print_result('Vowel Clusters', vowel_clusters)
+print_result('Start Letter Clusters', start_letter_clusters)
+print_result('Mid Letter Clusters', mid_letter_clusters)
+print_result('End Letter Clusters', end_letter_clusters)
 # print_result('Start Cons Clusters', start_cons_clusters)
 # print_result('Mid Cons Clusters', mid_cons_clusters)
 # print_result('End Cons Clusters', end_cons_clusters)
@@ -187,17 +202,49 @@ def print_result(title, dic):
 # print_result('End Vow Clusters', end_vow_clusters)
 
 analysis = []
-def dic_pack(dic, property):
+def dic_pack(dic, prop, location):
     package = []
     for key, value, in dic.items():
-        item = { key: { 'property': property, 'frequency': value }}
+        item = { key: { 'prop': prop, 'freq': value, 'loc': location }}
         package.append(item)
     return package
 
-def add_pack(title, dic, prop):
-    package = dic_pack(dic, prop)
+def add_pack(title, dic, prop, location):
+    package = dic_pack(dic, prop, location)
     analysis.append({title: package})
 
-add_pack('letters', letters, 'any')
+# add_pack('letters', letters, 'None', 'Any')
+# add_pack('consonants', cons, 'consonant', 'Any')
+# add_pack('vowels', vowels, 'vowel', 'Any')
 
-print(analysis)
+# add_pack('start_letters', start_letters, 'None', 'beginning')
+# add_pack('start_cons', start_cons, 'consonant', 'beginning')
+# add_pack('start_vowels', start_vowels, 'vowel', 'beginning')
+# add_pack('mid_letters', mid_letters, 'None', 'middle')
+# add_pack('mid_cons', mid_cons, 'consonant', 'middle')
+# add_pack('mid_vowels', mid_vowels, 'vowel', 'middle')
+# add_pack('end_letters', end_letters, 'None', 'end')
+# add_pack('end_cons', end_cons, 'consonant', 'end')
+# add_pack('end_vowels', end_vowels, 'vowel', 'end')
+
+# add_pack('letters', letters, 'None', 'Any')
+# add_pack('consonants', cons, 'consonant', 'Any')
+# add_pack('vowels', vowels, 'vowel', 'Any')
+
+# add_pack('letters_clusters', letter_clusters, 'None', 'beginning')
+# add_pack('start_cons', start_cons, 'consonant', 'beginning')
+# add_pack('start_vowels', start_vowels, 'vowel', 'beginning')
+# add_pack('mid_letters', mid_letters, 'None', 'middle')
+# add_pack('mid_cons', mid_cons, 'consonant', 'middle')
+# add_pack('mid_vowels', mid_vowels, 'vowel', 'middle')
+# add_pack('end_letters', end_letters, 'None', 'end')
+# add_pack('end_cons', end_cons, 'consonant', 'end')
+# add_pack('end_vowels', end_vowels, 'vowel', 'end')
+
+# letter_clusters, cons_clusters, vowel_clusters = {}, {}, {}
+# start_cons_clusters, mid_cons_clusters, end_cons_clusters = {}, {}, {}
+# start_vow_clusters, mid_vow_clusters, end_vow_clusters = {}, {}, {}
+
+# analysis_json = json.dumps(analysis)
+
+# print(analysis)
