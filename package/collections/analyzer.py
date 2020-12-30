@@ -23,7 +23,7 @@ def add_item_to_dic(item, dic):
     else:
         dic[item] = 1
 
-def dispatch_cluster(letter_type_list, prev_letter_type):
+def dispatch_cluster(letter_type_list, letter_type, prev_letter_type):
     if len(letter_type_list) > 1:
         cl = letter_type_list
         if prev_letter_type == 'consonant':
@@ -57,9 +57,9 @@ for word in words_list:
             if letter_type == prev_letter_type and letter_type != 'other':
                 letter_type_list += word[l]
                 if l == len(word)-1:
-                    letter_type_list = dispatch_cluster(letter_type_list, prev_letter_type)
+                    letter_type_list = dispatch_cluster(letter_type_list, letter_type, prev_letter_type)
             else:
-                letter_type_list = dispatch_cluster(letter_type_list, prev_letter_type)
+                letter_type_list = dispatch_cluster(letter_type_list, letter_type, prev_letter_type)
         else:
             letter_type_list = word[l]
         
