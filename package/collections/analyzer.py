@@ -255,4 +255,6 @@ add_pack('end_vow_cl',  cat, end_vow_clusters,      prop_vow, loc_end)
 
 # analysis_json = json.dumps(analysis)
 
-pprint.pprint(analysis)
+with open('results.py', 'w') as f:
+    f.write('results = ')
+    pprint.pprint(analysis, f)
