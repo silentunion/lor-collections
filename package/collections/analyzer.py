@@ -66,14 +66,16 @@ for word in words_list:
         prev_letter = word[l]
         prev_letter_type = letter_type
 
+
 # FILTERING LOW VALUES
-def remove_lower_values(dic):
+def remove_lower_values(dic, val):
     for k, v in dict(dic).items():
-        if v < 1:
+        if v < val:
             del dic[k]
 
-remove_lower_values(cons_clusters)
-remove_lower_values(vowel_clusters)
+remove_lower_values(cons_clusters, 2)
+remove_lower_values(vowel_clusters, 2)
+
 
 # CONVERSION OF TOTALS TO FREQUENCIES
 def convert_to_percent(total, dic):
