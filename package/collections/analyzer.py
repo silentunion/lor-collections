@@ -186,6 +186,7 @@ def print_result(title, dic):
 # print_result('Mid Vow Clusters', mid_vow_clusters)
 # print_result('End Vow Clusters', end_vow_clusters)
 
+analysis = []
 def dic_pack(dic, property):
     package = []
     for key, value, in dic.items():
@@ -193,7 +194,10 @@ def dic_pack(dic, property):
         package.append(item)
     return package
 
-letters = dic_pack(letters, 'any')
+def add_pack(title, dic, prop):
+    package = dic_pack(dic, prop)
+    analysis.append({title: package})
 
-print(letters)
-# print(analysis)
+add_pack('letters', letters, 'any')
+
+print(analysis)
