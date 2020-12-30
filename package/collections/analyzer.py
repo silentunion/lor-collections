@@ -1,5 +1,6 @@
 import organizer as org
 import json
+import pprint
 
 words_list = org.get_words()
 vowels_list = ['a', 'e', 'i', 'o', 'u', 'y']
@@ -254,4 +255,4 @@ add_pack('end_vow_cl',  cat, end_vow_clusters,      prop_vow, loc_end)
 
 # analysis_json = json.dumps(analysis)
 
-print(analysis)
+pprint.pprint(analysis)
