@@ -11,6 +11,7 @@ cons_clusters, vowel_clusters = {}, {}
 letter_type = ''
 prev_letter = ''
 prev_letter_type = ''
+letter_type_list = ''
 
 total_letters, total_cons, total_vowels = 0, 0, 0
 total_cons_cl, total_vowels_cl = 0, 0
@@ -21,6 +22,20 @@ def add_item_to_dic(item, dic):
         dic[item] += 1
     else:
         dic[item] = 1
+
+def dispatch_cluster(letter_type_list, letter_type, prev_letter_type):
+    if len(letter_type_list) > 1:
+        cl = letter_type_list
+        if prev_letter_type == 'consonant':
+            add_item_to_dic(cl, cons_clusters)
+        else:
+            add_item_to_dic(cl, vowel_clusters)          
+    if letter_type != 'other':
+        letter_type_list = word[l]
+    else:
+        letter_type_list = ''
+
+    return letter_type_list
 
 for word in words_list:
     for l in range(len(word)):
@@ -35,19 +50,31 @@ for word in words_list:
         else:
             letter_type = 'other'
 
-        add_item_to_dic(word[l], letters)
+        if letter_type != 'other':
+            add_item_to_dic(word[l], letters)
         
         if l != 0:
-            if letter_type == 'consonant' and prev_letter_type == 'consonant':
-                cl = prev_letter + word[l]
-                add_item_to_dic(cl, cons_clusters)
-            
-            if letter_type == 'vowel' and prev_letter_type == 'vowel':
-                cl = prev_letter + word[l]
-                add_item_to_dic(cl, vowel_clusters)
-
+            if letter_type == prev_letter_type and letter_type != 'other':
+                letter_type_list += word[l]
+                if l == len(word)-1:
+                    letter_type_list = dispatch_cluster(letter_type_list, letter_type, prev_letter_type)
+            else:
+                letter_type_list = dispatch_cluster(letter_type_list, letter_type, prev_letter_type)
+        else:
+            letter_type_list = word[l]
+        
         prev_letter = word[l]
         prev_letter_type = letter_type
+
+
+# FILTERING LOW VALUES
+def remove_lower_values(dic, val):
+    for k, v in dict(dic).items():
+        if v < val:
+            del dic[k]
+
+remove_lower_values(cons_clusters, 2)
+remove_lower_values(vowel_clusters, 2)
 
 
 # CONVERSION OF TOTALS TO FREQUENCIES
