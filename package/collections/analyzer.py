@@ -23,6 +23,20 @@ def add_item_to_dic(item, dic):
     else:
         dic[item] = 1
 
+def dispatch_cluster(letter_type_list, prev_letter_type):
+    if len(letter_type_list) > 1:
+        cl = letter_type_list
+        if prev_letter_type == 'consonant':
+            add_item_to_dic(cl, cons_clusters)
+        else:
+            add_item_to_dic(cl, vowel_clusters)          
+    if letter_type != 'other':
+        letter_type_list = word[l]
+    else:
+        letter_type_list = ''
+
+    return letter_type_list
+
 for word in words_list:
     for l in range(len(word)):
         if word[l] in vowels_list:
@@ -43,34 +57,16 @@ for word in words_list:
             if letter_type == prev_letter_type and letter_type != 'other':
                 letter_type_list += word[l]
                 if l == len(word)-1:
-                    if len(letter_type_list) > 1:
-                        cl = letter_type_list
-                        if prev_letter_type == 'consonant':
-                            add_item_to_dic(cl, cons_clusters)
-                        else:
-                            add_item_to_dic(cl, vowel_clusters)          
-                    if letter_type != 'other':
-                        letter_type_list = word[l]
-                    else:
-                        letter_type_list = ''
+                    letter_type_list = dispatch_cluster(letter_type_list, prev_letter_type)
             else:
-                if len(letter_type_list) > 1:
-                    cl = letter_type_list
-                    if prev_letter_type == 'consonant':
-                        add_item_to_dic(cl, cons_clusters)
-                    else:
-                        add_item_to_dic(cl, vowel_clusters)          
-                if letter_type != 'other':
-                    letter_type_list = word[l]
-                else:
-                    letter_type_list = ''
+                letter_type_list = dispatch_cluster(letter_type_list, prev_letter_type)
         else:
             letter_type_list = word[l]
         
         prev_letter = word[l]
         prev_letter_type = letter_type
 
-
+# FILTERING LOW VALUES
 def remove_lower_values(dic):
     for k, v in dict(dic).items():
         if v < 1:
