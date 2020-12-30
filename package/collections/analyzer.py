@@ -9,7 +9,7 @@ letters, cons, vowels = {}, {}, {}
 start_letters, start_cons, start_vowels = {}, {}, {}
 mid_letters, mid_cons, mid_vowels = {}, {}, {}
 end_letters, end_cons, end_vowels = {}, {}, {}
-cons_clusters, vowel_clusters = {}, {}
+letter_clusters, cons_clusters, vowel_clusters = {}, {}, {}
 start_cons_clusters, mid_cons_clusters, end_cons_clusters = {}, {}, {}
 start_vow_clusters, mid_vow_clusters, end_vow_clusters = {}, {}, {}
 
@@ -19,7 +19,7 @@ tot_letters, tot_cons, tot_vowels = 0, 0, 0
 tot_start_letters, tot_start_cons, tot_start_vowels = 0, 0, 0
 tot_mid_letters, tot_mid_cons, tot_mid_vowels = 0, 0, 0
 tot_end_letters, tot_end_cons, tot_end_vowels = 0, 0, 0
-tot_cons_cl, tot_vowels_cl = 0, 0
+tot_letter_cl, tot_cons_cl, tot_vowels_cl = 0, 0, 0
 tot_start_cons_cl, tot_mid_cons_cl, tot_end_cons_cl = 0, 0, 0
 tot_start_vow_cl, tot_mid_vow_cl, tot_end_vow_cl = 0, 0, 0
 
@@ -34,6 +34,7 @@ def add_item_to_dic(item, dic):
 def dispatch_cluster(letter_type_list, letter_type, prev_letter_type, is_beginning=False, is_end=False):
     if len(letter_type_list) > 1:
         cl = letter_type_list
+        add_item_to_dic(cl, letter_clusters)
         if prev_letter_type == 'consonant':
             add_item_to_dic(cl, cons_clusters)
             if is_end:
@@ -140,6 +141,7 @@ convert_to_percent(tot_end_letters, end_letters)
 convert_to_percent(tot_end_cons, end_cons)
 convert_to_percent(tot_end_vowels, end_vowels)
 
+convert_to_percent(tot_letter_cl, letter_clusters)
 convert_to_percent(tot_cons_cl, cons_clusters)
 convert_to_percent(tot_vowels_cl, vowel_clusters)
 
@@ -174,6 +176,7 @@ print_result('Mid Vowels', mid_vowels)
 print_result('End Letters', end_letters)
 print_result('End Cons', end_cons)
 print_result('End Vowels', end_vowels)
+print_result('Letter Clusters', letter_clusters)
 print_result('Consonant Clusters', cons_clusters)
 print_result('Vowel Clusters', vowel_clusters)
 print_result('Start Cons Clusters', start_cons_clusters)
