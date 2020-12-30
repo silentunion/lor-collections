@@ -2,6 +2,8 @@ import organizer as org
 import json
 import pprint
 
+name = 'eng_3000'
+
 words_list = org.get_words()
 vowels_list = ['a', 'e', 'i', 'o', 'u', 'y']
 consonants_list = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
@@ -255,6 +257,6 @@ add_pack('end_vow_cl',  cat, end_vow_clusters,      prop_vow, loc_end)
 
 # analysis_json = json.dumps(analysis)
 
-with open('results.py', 'w') as f:
+with open('results/'+ name +'.py', 'w') as f:
     f.write('results = ')
     pprint.pprint(analysis, f)
