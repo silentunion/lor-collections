@@ -7,6 +7,7 @@ consonants_list = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
 
 letters, cons, vowels = {}, {}, {}
 cons_clusters, vowel_clusters = {}, {}
+start_clusters, end_clusters = {}, {}
 
 letter_type = ''
 prev_letter = ''
@@ -15,6 +16,7 @@ letter_type_list = ''
 
 total_letters, total_cons, total_vowels = 0, 0, 0
 total_cons_cl, total_vowels_cl = 0, 0
+total_start_cl, total_end_cl = 0, 0
 
 # Adds item to the specified dictionary
 def add_item_to_dic(item, dic):
@@ -23,11 +25,15 @@ def add_item_to_dic(item, dic):
     else:
         dic[item] = 1
 
-def dispatch_cluster(letter_type_list, letter_type, prev_letter_type):
+def dispatch_cluster(letter_type_list, letter_type, prev_letter_type, is_beginning=False, is_end=False):
     if len(letter_type_list) > 1:
         cl = letter_type_list
         if prev_letter_type == 'consonant':
             add_item_to_dic(cl, cons_clusters)
+            if is_end:
+                add_item_to_dic(cl, end_clusters)
+            elif is_beginning:
+                add_item_to_dic(cl, start_clusters)
         else:
             add_item_to_dic(cl, vowel_clusters)          
     if letter_type != 'other':
@@ -38,6 +44,7 @@ def dispatch_cluster(letter_type_list, letter_type, prev_letter_type):
     return letter_type_list
 
 for word in words_list:
+    is_beginning = True
     for l in range(len(word)):
         if word[l] in vowels_list:
             letter_type = 'vowel'
@@ -57,11 +64,13 @@ for word in words_list:
             if letter_type == prev_letter_type and letter_type != 'other':
                 letter_type_list += word[l]
                 if l == len(word)-1:
-                    letter_type_list = dispatch_cluster(letter_type_list, letter_type, prev_letter_type)
+                    letter_type_list = dispatch_cluster(letter_type_list, letter_type, prev_letter_type, is_end=True)
             else:
-                letter_type_list = dispatch_cluster(letter_type_list, letter_type, prev_letter_type)
+                letter_type_list = dispatch_cluster(letter_type_list, letter_type, prev_letter_type, is_beginning)
+                is_beginning = False
         else:
             letter_type_list = word[l]
+            is_beginning = True
         
         prev_letter = word[l]
         prev_letter_type = letter_type
@@ -73,8 +82,8 @@ def remove_lower_values(dic, val):
         if v < val:
             del dic[k]
 
-remove_lower_values(cons_clusters, 2)
-remove_lower_values(vowel_clusters, 2)
+remove_lower_values(cons_clusters, 20)
+remove_lower_values(vowel_clusters, 1)
 
 
 # CONVERSION OF TOTALS TO FREQUENCIES
@@ -89,6 +98,8 @@ convert_to_percent(total_cons, cons)
 convert_to_percent(total_vowels, vowels)
 convert_to_percent(total_cons_cl, cons_clusters)
 convert_to_percent(total_vowels_cl, vowel_clusters)
+convert_to_percent(total_start_cl, start_clusters)
+convert_to_percent(total_end_cl, end_clusters)
 
 
 # PRINTING THE OUTPUT
@@ -107,3 +118,5 @@ print_result('Consonants', cons)
 print_result('Vowels', vowels)
 print_result('Consonant Clusters', cons_clusters)
 print_result('Vowel Clusters', vowel_clusters)
+print_result('Start Clusters', start_clusters)
+print_result('End Clusters', end_clusters)
