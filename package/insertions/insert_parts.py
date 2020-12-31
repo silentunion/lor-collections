@@ -59,13 +59,24 @@ class Insertions():
         category = 'letters'
         collection = 'English Basic'
         properties = [v, c, c, c, v, c, c, c, v, c, c, c, c, c, v, c, c, c, c, c, v, c, c, c, v, c]
+        freqs = ["0.084966", "0.020720", "0.045388", "0.033844", "0.111607",
+        "0.018121", "0.024705", "0.030034", "0.075448", "0.001965", "0.011016",
+        "0.054893", "0.030129", "0.066544", "0.071635", "0.031671", "0.001962",
+        "0.075809", "0.057351", "0.069509", "0.036308", "0.010074", "0.012899",
+        "0.002902", "0.017779", "0.002722"]
+
+        col_id = db.get_col_id_if_exists(collection)
 
         if len(parts) == len(properties):
             for p in range(0, len(parts)):
-                db.insert_part(parts[p], category)
-                db.add_part_to_collection(parts[p], category, collection)
-                db.add_prop_to_part(parts[p], category, collection, properties[p])
-                print('Added letter ' + parts[p] + ' to collection ' + collection + ' with prop ' + properties[p])
+                part_id = db.insert_part(parts[p], category)
+                cp_id = db.insert_collection_part(col_id, part_id)
+                prop_id = db.insert_property(properties[p], 'Any')
+                pp_id = db.insert_part_property(cp_id, prop_id, freqs[p])
+                print('Added letter ' + parts[p]
+                    + ' to collection ' + collection
+                    + ' with prop ' + properties[p]
+                    + ' and freq ' + freqs[p])
 
         else:
             print('List lengths do not match')
@@ -88,26 +99,3 @@ class Insertions():
             db.add_part_to_collection(parts[p], category, collection)
             db.add_prop_to_part(parts[p], category, collection, properties)
             print('Added letter ' + parts[p] + ' to collection ' + collection + ' with prop ' + properties)
-
-
-    def add_frequencies(self):
-        parts = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-        'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-        category = 'letters'
-        collection = 'English Basic'
-        freqs = ["0.084966", "0.020720", "0.045388", "0.033844", "0.111607",
-        "0.018121", "0.024705", "0.030034", "0.075448", "0.001965", "0.011016",
-        "0.054893", "0.030129", "0.066544", "0.071635", "0.031671", "0.001962",
-        "0.075809", "0.057351", "0.069509", "0.036308", "0.010074", "0.012899",
-        "0.002902", "0.017779", "0.002722"]
-
-        if len(parts) == len(freqs):
-            for p in range(0, len(parts)):
-                db.add_freq_to_part(parts[p], category, collection, freqs[p])
-                print('Applied freq ' + freqs[p] + ' to letter ' + parts[p])
-
-        else:
-            print('List lengths do not match')
-
-
-        print(len(parts), len(freqs))

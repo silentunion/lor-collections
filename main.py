@@ -4,7 +4,9 @@ from package.database import database
 def run():
     ins = insert_parts.Insertions()
 
-    ins.testing()
+    # ins.insert_alphabet()
+
+    
 
     # print("Inserting clusters")
     # ins.insert_clusters()
