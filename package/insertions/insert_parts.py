@@ -1,23 +1,55 @@
 from ..database.database import LORConnect
-from ..collections import analyzer
+# from ..collections import analyzer
+from ..collections.results import eng_3000
 
 db = LORConnect()
 
 class Insertions():
+    def testing(self):
+        theme = 'Ex Names'
+        language = 'Esperanto'
+        collection = 'Baggins Exs'
+        part = 'Maggie'
+        category = 'clusters'
+
+        theme_id = db.insert_theme(theme)
+        lang_id = db.insert_language(language)
+        col_id = db.insert_collection(lang_id, theme_id, collection)
+        
+        part_id = db.insert_part(part, category)
+        cp_id = db.insert_collection_part(col_id, part_id)
+        print(cp_id)
+
     def insert_analysis(self):
-        theme = 'Top 3000 words'
+        words_list = eng_3000.results
+        theme = 'Top 3000 Words'
         language = 'English US'
         collection = 'English US Top 3000 Words'
+        cat = ''
 
-        theme_id = insert_theme(theme)
-        lang_id = insert_language(language)
-        col_id = insert_collection(lang_id, theme_id, collection)
+        theme_id = db.insert_theme(theme)
+        lang_id = db.insert_language(language)
+        col_id = db.insert_collection(lang_id, theme_id, collection)
+
+        cat = words_list[0]['let']['category']
+
+        items = words_list[0]['let']['items']        
+        for i in items:
+            part = next(iter(i))
+            freq = i[part]['freq']
+            loc = i[part]['loc']
+            prop = i[part]['prop']
+            print(part, freq, loc, prop)
+            
         
-        for part in parts:
-            part_id = insert_part(part)
-            cp_id = insert_collection_part(col_id, part_id)
-            prop_id = insert_property(prop, location)
-            insert_part_property(cp_id, prop_id, frequency)
+        
+        
+        
+        # for part in parts:
+        #     part_id = insert_part(part)
+        #     cp_id = insert_collection_part(col_id, part_id)
+        #     prop_id = insert_property(prop, location)
+        #     insert_part_property(cp_id, prop_id, frequency)
 
     def insert_alphabet(self):
         v, c = 'vowel', 'consonant'
