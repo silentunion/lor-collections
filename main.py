@@ -6,7 +6,7 @@ def run():
 
     # ins.insert_alphabet()
 
-    
+    ins.insert_analysis()
 
     # print("Inserting clusters")
     # ins.insert_clusters()

@@ -31,15 +31,33 @@ class Insertions():
         lang_id = db.insert_language(language)
         col_id = db.insert_collection(lang_id, theme_id, collection)
 
-        cat = words_list[0]['let']['category']
+        for wl in words_list:
+            for key, value in wl.items():
+                category = wl[key]['category']
+                items = wl[key]['items']
+                for item in items:
+                    part = next(iter(item))
+                    part_id = db.insert_part(part, category)
+                    cp_id = db.insert_collection_part(col_id, part_id)
 
-        items = words_list[0]['let']['items']        
-        for i in items:
-            part = next(iter(i))
-            freq = i[part]['freq']
-            loc = i[part]['loc']
-            prop = i[part]['prop']
-            print(part, freq, loc, prop)
+                    freq = item[part]['freq']
+                    loc = item[part]['loc']
+                    prop = item[part]['prop']
+
+                    prop_id = db.insert_property(prop, loc)
+                    pp_id = db.insert_part_property(cp_id, prop_id, freq)
+                    print(pp_id, ' Added ' + part
+                        + ' to collection ' + collection
+                        + ' with property ' + prop, loc
+                        + ' and frequency' + str(freq))
+
+        # items = words_list[0]['let']['items']        
+        # for i in items:
+        #     part = next(iter(i))
+        #     freq = i[part]['freq']
+        #     loc = i[part]['loc']
+        #     prop = i[part]['prop']
+        #     print(part, freq, loc, prop)
             
         
         
