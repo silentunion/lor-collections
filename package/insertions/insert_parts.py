@@ -1,23 +1,73 @@
 from ..database.database import LORConnect
-from ..collections import analyzer
+# from ..collections import analyzer
+from ..collections.results import eng_3000
 
 db = LORConnect()
 
 class Insertions():
+    def testing(self):
+        theme = 'Ex Names'
+        language = 'Esperanto'
+        collection = 'Baggins Exs'
+        part = 'Maggie'
+        category = 'clusters'
+
+        theme_id = db.insert_theme(theme)
+        lang_id = db.insert_language(language)
+        col_id = db.insert_collection(lang_id, theme_id, collection)
+        
+        part_id = db.insert_part(part, category)
+        cp_id = db.insert_collection_part(col_id, part_id)
+        print(cp_id)
+
     def insert_analysis(self):
-        theme = 'Top 3000 words'
+        words_list = eng_3000.results
+        theme = 'Top 3000 Words'
         language = 'English US'
         collection = 'English US Top 3000 Words'
+        cat = ''
 
-        theme_id = insert_theme(theme)
-        lang_id = insert_language(language)
-        col_id = insert_collection(lang_id, theme_id, collection)
+        theme_id = db.insert_theme(theme)
+        lang_id = db.insert_language(language)
+        col_id = db.insert_collection(lang_id, theme_id, collection)
+
+        for wl in words_list:
+            for key, value in wl.items():
+                category = wl[key]['category']
+                items = wl[key]['items']
+                for item in items:
+                    part = next(iter(item))
+                    part_id = db.insert_part(part, category)
+                    cp_id = db.insert_collection_part(col_id, part_id)
+
+                    freq = item[part]['freq']
+                    loc = item[part]['loc']
+                    prop = item[part]['prop']
+
+                    prop_id = db.insert_property(prop, loc)
+                    pp_id = db.insert_part_property(cp_id, prop_id, freq)
+                    print(pp_id, ' Added ' + part
+                        + ' to collection ' + collection
+                        + ' with property ' + prop, loc
+                        + ' and frequency' + str(freq))
+
+        # items = words_list[0]['let']['items']        
+        # for i in items:
+        #     part = next(iter(i))
+        #     freq = i[part]['freq']
+        #     loc = i[part]['loc']
+        #     prop = i[part]['prop']
+        #     print(part, freq, loc, prop)
+            
         
-        for part in parts:
-            part_id = insert_part(part)
-            cp_id = insert_collection_part(col_id, part_id)
-            prop_id = insert_property(prop, location)
-            insert_part_property(cp_id, prop_id, frequency)
+        
+        
+        
+        # for part in parts:
+        #     part_id = insert_part(part)
+        #     cp_id = insert_collection_part(col_id, part_id)
+        #     prop_id = insert_property(prop, location)
+        #     insert_part_property(cp_id, prop_id, frequency)
 
     def insert_alphabet(self):
         v, c = 'vowel', 'consonant'
@@ -27,13 +77,24 @@ class Insertions():
         category = 'letters'
         collection = 'English Basic'
         properties = [v, c, c, c, v, c, c, c, v, c, c, c, c, c, v, c, c, c, c, c, v, c, c, c, v, c]
+        freqs = ["0.084966", "0.020720", "0.045388", "0.033844", "0.111607",
+        "0.018121", "0.024705", "0.030034", "0.075448", "0.001965", "0.011016",
+        "0.054893", "0.030129", "0.066544", "0.071635", "0.031671", "0.001962",
+        "0.075809", "0.057351", "0.069509", "0.036308", "0.010074", "0.012899",
+        "0.002902", "0.017779", "0.002722"]
+
+        col_id = db.get_col_id_if_exists(collection)
 
         if len(parts) == len(properties):
             for p in range(0, len(parts)):
-                db.insert_part(parts[p], category)
-                db.add_part_to_collection(parts[p], category, collection)
-                db.add_prop_to_part(parts[p], category, collection, properties[p])
-                print('Added letter ' + parts[p] + ' to collection ' + collection + ' with prop ' + properties[p])
+                part_id = db.insert_part(parts[p], category)
+                cp_id = db.insert_collection_part(col_id, part_id)
+                prop_id = db.insert_property(properties[p], 'Any')
+                pp_id = db.insert_part_property(cp_id, prop_id, freqs[p])
+                print('Added letter ' + parts[p]
+                    + ' to collection ' + collection
+                    + ' with prop ' + properties[p]
+                    + ' and freq ' + freqs[p])
 
         else:
             print('List lengths do not match')
@@ -56,26 +117,3 @@ class Insertions():
             db.add_part_to_collection(parts[p], category, collection)
             db.add_prop_to_part(parts[p], category, collection, properties)
             print('Added letter ' + parts[p] + ' to collection ' + collection + ' with prop ' + properties)
-
-
-    def add_frequencies(self):
-        parts = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-        'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-        category = 'letters'
-        collection = 'English Basic'
-        freqs = ["0.084966", "0.020720", "0.045388", "0.033844", "0.111607",
-        "0.018121", "0.024705", "0.030034", "0.075448", "0.001965", "0.011016",
-        "0.054893", "0.030129", "0.066544", "0.071635", "0.031671", "0.001962",
-        "0.075809", "0.057351", "0.069509", "0.036308", "0.010074", "0.012899",
-        "0.002902", "0.017779", "0.002722"]
-
-        if len(parts) == len(freqs):
-            for p in range(0, len(parts)):
-                db.add_freq_to_part(parts[p], category, collection, freqs[p])
-                print('Applied freq ' + freqs[p] + ' to letter ' + parts[p])
-
-        else:
-            print('List lengths do not match')
-
-
-        print(len(parts), len(freqs))

@@ -221,7 +221,7 @@ prop_con = 'consonant'
 prop_vow = 'vowel'
 
 loc_any = 'Any'
-loc_beg = 'beginnning'
+loc_beg = 'beginning'
 loc_mid = 'middle'
 loc_end = 'end'
 
