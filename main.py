@@ -20,7 +20,7 @@ def run():
 
     path = '\\resources\\2020-2 UNLOCODE CodeList.txt'
 
-    org.get_words_from_txt(path)
+    org.get_words_from_txt(path, 'JP')
 
 if __name__ == "__main__":
     run()

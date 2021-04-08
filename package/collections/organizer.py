@@ -16,7 +16,7 @@ class Collections():
         return new_words_list
 
 
-    def get_words_from_txt(self, path):
+    def get_words_from_txt(self, path, code):
         dirname = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         print(dirname)
         filename = dirname + path
@@ -28,6 +28,9 @@ class Collections():
         num_lines = 0
 
         for l in lines:
-            num_lines += 1
+            l_string = l.lstrip()
+            if l_string.startswith(code):
+                print(l_string)
+                num_lines += 1
         
         print('num lines: ', num_lines)
