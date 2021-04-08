@@ -1,4 +1,5 @@
 import os
+import unidecode
 
 class Collections():
     def get_words(self):
@@ -35,9 +36,9 @@ class Collections():
                 item = l_string[7:42]
                 if not item.startswith('.'):
                     item = item.rstrip().replace(',', '').replace('/', ' ').split()
-                    items.update(item)
-                
-                    num_lines += 1
+                    for i in item:
+                        decoded_item = unidecode.unidecode(i)
+                        items.add(decoded_item)
         
         print(sorted(items))
-        print('num lines: ', num_lines)
+        print('num lines: ', len(items))
