@@ -32,11 +32,12 @@ class Collections():
         for l in lines:
             l_string = l.lstrip()
             if l_string.startswith(code):
-                item = l_string[7:43]
-                item = item.rstrip().replace(',', '').replace('/', ' ').split()
-                items.update(item)
+                item = l_string[7:42]
+                if not item.startswith('.'):
+                    item = item.rstrip().replace(',', '').replace('/', ' ').split()
+                    items.update(item)
                 
-                num_lines += 1
+                    num_lines += 1
         
         print(sorted(items))
         print('num lines: ', num_lines)
