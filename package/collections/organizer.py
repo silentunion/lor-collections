@@ -31,6 +31,3 @@ class Collections():
             num_lines += 1
         
         print('num lines: ', num_lines)
-
-    def test(self):
-        print('works')
